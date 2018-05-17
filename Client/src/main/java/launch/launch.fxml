@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: #00b0f0; -fx-border-width: 3;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="launch.LaunchController">
+   <children>
+      <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../../cloud-small.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="250.0" layoutY="30.0" text="Files" textAlignment="CENTER" textFill="#46b4ff">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label contentDisplay="CENTER" layoutX="250.0" layoutY="60.0" text="testtest test" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="7.0" />
+         </font>
+      </Label>
+      <ProgressBar layoutX="78.0" layoutY="568.0" prefHeight="18.0" prefWidth="460.0" progress="0.0" />
+      <TreeTableView layoutX="78.0" layoutY="75.0" prefHeight="394.0" prefWidth="452.0">
+        <columns>
+          <TreeTableColumn prefWidth="37.0" text="№" />
+          <TreeTableColumn prefWidth="253.0" text="Name" />
+            <TreeTableColumn prefWidth="63.0" text="Size" />
+            <TreeTableColumn prefWidth="98.0" text="Last Changes" />
+        </columns>
+      </TreeTableView>
+      <Button layoutX="78.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Upload" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+         <padding>
+            <Insets right="30.0" />
+         </padding>
+      </Button>
+      <Button layoutX="164.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Download" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+         <padding>
+            <Insets right="30.0" />
+         </padding>
+      </Button>
+      <Button layoutX="243.0" layoutY="523.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Rename" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+         <padding>
+            <Insets right="30.0" />
+         </padding>
+      </Button>
+      <Button layoutX="276.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Delete" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+         <padding>
+            <Insets right="30.0" />
+         </padding>
+      </Button>
+      <Button layoutX="83.0" layoutY="523.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Move" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+         <padding>
+            <Insets right="30.0" />
+         </padding>
+      </Button>
+      <Button layoutX="411.0" layoutY="523.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Refresh" textAlignment="CENTER">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+         <padding>
+            <Insets right="30.0" />
+         </padding>
+      </Button>
+   </children>
+</AnchorPane>
