@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: #00b0f0; -fx-border-width: 3;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="launch.LaunchController">
+<AnchorPane prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: #00b0f0; -fx-border-width: 3; -fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LaunchController">
    <children>
       <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../../../cloud-small.png" />
+            <Image url="@../../../../../../cloud-small.png" />
          </image>
       </ImageView>
       <Label layoutX="250.0" layoutY="30.0" text="Files" textAlignment="CENTER" textFill="#46b4ff">
@@ -52,7 +50,7 @@
             <Insets right="30.0" />
          </padding>
       </Button>
-      <Button layoutX="243.0" layoutY="523.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Rename" textAlignment="CENTER">
+      <Button layoutX="388.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Rename" textAlignment="CENTER">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
@@ -68,21 +66,21 @@
             <Insets right="30.0" />
          </padding>
       </Button>
-      <Button layoutX="83.0" layoutY="523.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Move" textAlignment="CENTER">
+      <Button fx:id="closeBtn" layoutX="558.0" layoutY="11.0" mnemonicParsing="false" onAction="#closeButtonAction" style="-fx-background-color: #fff;" text="X" textAlignment="CENTER" textFill="#46b4ff">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
-         <padding>
-            <Insets right="30.0" />
-         </padding>
       </Button>
-      <Button layoutX="411.0" layoutY="523.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Refresh" textAlignment="CENTER">
+      <Button fx:id="logOutBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="491.0" layoutY="48.0" mnemonicParsing="false" onAction="#getLoginScene" style="-fx-background-color: #fff;" text="Log out" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
-         <padding>
-            <Insets right="30.0" />
-         </padding>
       </Button>
    </children>
 </AnchorPane>

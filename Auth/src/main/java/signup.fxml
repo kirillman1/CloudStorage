@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: #46b4ff; -fx-border-width: 3; -fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SignUpController">
+   <children>
+      <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../cloud-small.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="179.0" layoutY="30.0" text="Registration" textAlignment="CENTER" textFill="#46b4ff">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="20.0" />
+         </font>
+      </Label>
+      <Button fx:id="submitButton" layoutX="200.0" layoutY="330.0" mnemonicParsing="false" onAction="#addNewUser" prefWidth="200.0" style="-fx-background-color: #46b4ff;" text="Submit" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="12.0" />
+         </font>
+      </Button>
+      <TextField fx:id="firstName" alignment="CENTER" layoutX="200.0" layoutY="80.0" prefHeight="25.0" prefWidth="200.0" promptText="First Name" />
+      <TextField fx:id="lastName" alignment="CENTER" layoutX="200.0" layoutY="120.0" prefHeight="25.0" prefWidth="200.0" promptText="Last Name" />
+      <TextField fx:id="email" alignment="CENTER" layoutX="200.0" layoutY="160.0" prefHeight="25.0" prefWidth="200.0" promptText="Email" />
+      <TextField fx:id="confirmEmail" alignment="CENTER" layoutX="200.0" layoutY="200.0" prefHeight="25.0" prefWidth="200.0" promptText="Confirm Email" />
+      <PasswordField fx:id="password" alignment="CENTER" layoutX="200.0" layoutY="240.0" prefHeight="25.0" prefWidth="200.0" promptText="Password" />
+      <PasswordField fx:id="confirmPassword" alignment="CENTER" layoutX="200.0" layoutY="280.0" prefHeight="25.0" prefWidth="200.0" promptText="Confirm Password" />
+       <Button fx:id="closeBtn" layoutX="557.0" layoutY="14.0" mnemonicParsing="false" onAction="#closeButtonAction" style="-fx-background-color: #fff;" text="X" textAlignment="CENTER" textFill="#46b4ff">
+           <cursor>
+               <Cursor fx:constant="HAND" />
+           </cursor>
+           <font>
+               <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+           </font>
+       </Button>
+       <Button fx:id="backBtn" layoutX="13.0" layoutY="331.0" mnemonicParsing="false" onAction="#getLoginScene" style="-fx-background-color: #fff;" text="&lt; Back" textAlignment="CENTER" textFill="#46b4ff">
+           <font>
+               <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+           </font>
+           <cursor>
+               <Cursor fx:constant="HAND" />
+           </cursor>
+       </Button>
+      <Label fx:id="errorMsg" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="22.0" layoutY="369.0" prefHeight="17.0" prefWidth="560.0" textAlignment="CENTER" textFill="RED">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
