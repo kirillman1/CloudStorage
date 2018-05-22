@@ -29,7 +29,7 @@ public class LoginController {
 
     @FXML
     private void launch() throws SQLException, IOException {
-        if (SQLHandler.checkUsernamePassword(email.getText(), password.getText())){
+        if (SQLHandler.checkUsernamePassword(email.getText(), password.getText())) {
             getLaunchScene();
         }
     }

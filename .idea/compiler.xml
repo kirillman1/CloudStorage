@@ -8,9 +8,12 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Auth" />
         <module name="Client" />
-        <module name="DAO" />
+        <module name="Common" />
         <module name="Server" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="DAO" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>

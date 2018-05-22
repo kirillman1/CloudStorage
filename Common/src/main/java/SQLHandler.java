@@ -2,9 +2,6 @@ import java.sql.*;
 
 public class SQLHandler {
     //private static final String driverName = "com.mysql.cj.jdbc.Driver";
-    private static final String connectionString = "jdbc:mysql://localhost:3306/cloud";
-    private static final String loginBase = "root";
-    private static final String passwordBase = "root";
 
     private static Connection connection;
     private static Statement statement;
@@ -12,7 +9,7 @@ public class SQLHandler {
 
     public static void connect() throws SQLException{
             //Class.forName(driverName);
-            connection = DriverManager.getConnection(connectionString, loginBase, passwordBase);
+            connection = DriverManager.getConnection(Configuration.DB_HOST, Configuration.DB_LOGIN, Configuration.DB_PASSWORD);
             statement = connection.createStatement();
     }
 
@@ -22,7 +19,6 @@ public class SQLHandler {
     }
 
     public static void addNewUser (String firstName, String lastName, String email, String password) throws SQLException{
-        connect();
         createTable();
         int passwordHash = password.hashCode();
         String inputSQL = "INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?);";

@@ -12,12 +12,14 @@
     <artifactId>Server</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>kirillgontov</groupId>
-            <artifactId>DAO</artifactId>
+            <artifactId>Common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
 
 
 </project>

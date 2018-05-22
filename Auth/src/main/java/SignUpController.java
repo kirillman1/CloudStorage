@@ -59,16 +59,19 @@ public class SignUpController {
             showAlert("Email does not match");
             email.clear();
             confirmEmail.clear();
+            email.requestFocus();
         } else if (isEmailConfirmed()){
             showAlert("Password does not match");
             password.clear();
             confirmPassword.clear();
+            password.requestFocus();
         } else {
             showAlert("Email does not match. Password does not match");
             email.clear();
             confirmEmail.clear();
             password.clear();
             confirmPassword.clear();
+            email.requestFocus();
         }
 
     }

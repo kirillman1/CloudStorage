@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <artifactId>DAO</artifactId>
+            <artifactId>Common</artifactId>
             <groupId>kirillgontov</groupId>
             <version>1.0-SNAPSHOT</version>
 
