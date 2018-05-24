@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
@@ -26,15 +25,8 @@
          </font>
       </Label>
       <ProgressBar layoutX="78.0" layoutY="568.0" prefHeight="18.0" prefWidth="460.0" progress="0.0" />
-      <TreeTableView layoutX="78.0" layoutY="75.0" prefHeight="394.0" prefWidth="452.0">
-        <columns>
-          <TreeTableColumn prefWidth="37.0" text="№" />
-          <TreeTableColumn prefWidth="253.0" text="Name" />
-            <TreeTableColumn prefWidth="63.0" text="Size" />
-            <TreeTableColumn prefWidth="98.0" text="Last Changes" />
-        </columns>
-      </TreeTableView>
-      <Button layoutX="78.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Upload" textAlignment="CENTER">
+
+      <Button fx:id="uploadBtn" onAction="#upload" layoutX="78.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Upload" textAlignment="CENTER">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
@@ -42,7 +34,7 @@
             <Insets right="30.0" />
          </padding>
       </Button>
-      <Button layoutX="164.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Download" textAlignment="CENTER">
+      <Button fx:id="downloadBtn" onAction="#download" layoutX="164.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Download" textAlignment="CENTER">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
@@ -50,7 +42,7 @@
             <Insets right="30.0" />
          </padding>
       </Button>
-      <Button layoutX="388.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Rename" textAlignment="CENTER">
+      <Button fx:id="renameBtn" onAction="#rename" layoutX="388.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Rename" textAlignment="CENTER">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
@@ -58,7 +50,7 @@
             <Insets right="30.0" />
          </padding>
       </Button>
-      <Button layoutX="276.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Delete" textAlignment="CENTER">
+      <Button fx:id="deleteBtn" onAction="#delete" layoutX="276.0" layoutY="491.0" mnemonicParsing="false" style="-fx-background-color: #fff;" text="Delete" textAlignment="CENTER">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
@@ -74,7 +66,7 @@
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
       </Button>
-      <Button fx:id="logOutBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="491.0" layoutY="48.0" mnemonicParsing="false" onAction="#getLoginScene" style="-fx-background-color: #fff;" text="Log out" textAlignment="RIGHT">
+      <Button fx:id="logOutBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="491.0" layoutY="48.0" mnemonicParsing="false" onAction="#disconnect" style="-fx-background-color: #fff;" text="Log out" textAlignment="RIGHT">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -82,5 +74,8 @@
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
       </Button>
+      <ListView fx:id="view" layoutX="32.0" layoutY="88.0" prefHeight="398.0" prefWidth="532.0">
+
+      </ListView>
    </children>
 </AnchorPane>

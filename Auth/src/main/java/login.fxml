@@ -44,7 +44,7 @@
             <Image url="@../../../../../../password.png" />
          </image>
       </ImageView>
-      <Button fx:id="logInBtn" onAction="#launch" layoutX="200.0" layoutY="320.0" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #46b4ff;" text="Login" textAlignment="CENTER" textFill="WHITE">
+      <Button fx:id="logInBtn" onAction="#connect" layoutX="200.0" layoutY="320.0" mnemonicParsing="false" prefWidth="200.0" style="-fx-background-color: #46b4ff;" text="Login" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="12.0" />
          </font>
@@ -60,5 +60,10 @@
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
          </font>
       </Button>
+      <Label fx:id="errorMsg" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="22.0" layoutY="369.0" prefHeight="17.0" prefWidth="560.0" textAlignment="CENTER" textFill="RED">
+         <font>
+            <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

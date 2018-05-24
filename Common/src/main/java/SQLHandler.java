@@ -30,16 +30,25 @@ public class SQLHandler {
         preparedStatement.executeUpdate();
     }
 
-    public static boolean checkUsernamePassword(String email, String password) throws SQLException {
+    public static boolean checkUsername(String email) throws SQLException {
         connect();
+        String findUserSQL = "SELECT email FROM users WHERE email = ?;";
+        preparedStatement = connection.prepareStatement(findUserSQL);
+        preparedStatement.setString(1,email);
+        ResultSet rsFindUser = preparedStatement.executeQuery();
+        return rsFindUser.next();
+    }
+
+    public static boolean checkPassword(String email, String password) throws SQLException {
         int passwordHash = password.hashCode();
-        String selectSQL = "SELECT email, password FROM users WHERE email = ? AND password = ?;";
-        preparedStatement = connection.prepareStatement(selectSQL);
+        String checkPasswordSQL = "SELECT email, password FROM users WHERE email = ? AND password = ?;";
+        preparedStatement = connection.prepareStatement(checkPasswordSQL);
         preparedStatement.setString(1,email);
         preparedStatement.setInt(2,passwordHash);
-        ResultSet rs = preparedStatement.executeQuery();
-        return rs.next();
+        ResultSet rsCheckPassword = preparedStatement.executeQuery();
+        return rsCheckPassword.next();
     }
+
 
     public static void disconnect() {
         try {

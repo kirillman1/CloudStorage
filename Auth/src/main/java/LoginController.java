@@ -3,37 +3,54 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.sql.SQLException;
+
 
 
 public class LoginController {
 
     @FXML
-    Button signUpBtn;
-
+    Label errorMsg;
     @FXML
-    Button logInBtn;
-
-    @FXML
-    Button closeBtn;
-
+    Button signUpBtn, logInBtn, closeBtn;
     @FXML
     TextField email;
+    @FXML
+    PasswordField password;
+
+
+    private SocketChannel clientSocket;
+    private ByteBuffer buffer;
 
     @FXML
-    TextField password;
-
-    @FXML
-    private void launch() throws SQLException, IOException {
-        if (SQLHandler.checkUsernamePassword(email.getText(), password.getText())) {
-            getLaunchScene();
+    private void connect() throws SQLException, IOException {
+        if (!checkUser()) {
+            email.clear();
+            email.requestFocus();
+            showAlert("User is not registered");
+        } else if (!checkPassword()){
+            password.clear();
+            password.requestFocus();
+            showAlert("Wrong password");
+        } else {
+            try {
+                clientSocket = SocketChannel.open(new InetSocketAddress(Configuration.SERVER_HOST,Configuration.SERVER_PORT));
+                buffer = ByteBuffer.allocate(256);
+                getLaunchScene();
+            } catch (IOException e) {
+                showAlert("Server connection maintenance");
+            }
         }
     }
-
 
     @FXML
     private void getSignUpScene() throws IOException {
@@ -50,7 +67,19 @@ public class LoginController {
         stage.setScene(sceneLaunch);
     }
 
+    private boolean checkUser() throws SQLException {
+        return SQLHandler.checkUsername(email.getText());
+    }
 
+    private boolean checkPassword() throws SQLException {
+        return SQLHandler.checkPassword(email.getText(), password.getText());
+    }
+
+
+    private void showAlert(String msg) {
+        errorMsg.setText(msg);
+        errorMsg.setVisible(true);
+    }
 
     @FXML
     private void closeButtonAction(){

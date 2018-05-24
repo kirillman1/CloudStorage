@@ -10,38 +10,14 @@ import java.sql.SQLException;
 
 
 public class SignUpController {
-
     @FXML
-    TextField firstName;
-
+    TextField firstName, lastName, email, confirmEmail;
     @FXML
-    TextField lastName;
-
+    PasswordField password, confirmPassword;
     @FXML
-    TextField email;
-
-    @FXML
-    TextField confirmEmail;
-
-    @FXML
-    PasswordField password;
-
-    @FXML
-    PasswordField confirmPassword;
-
-    @FXML
-    Button submitButton;
-
-    @FXML
-    Button closeBtn;
-
-    @FXML
-    Button backBtn;
-
+    Button submitButton, closeBtn, backBtn;
     @FXML
     Label errorMsg;
-
-
 
     @FXML
     private void addNewUser() throws IOException{
@@ -84,19 +60,10 @@ public class SignUpController {
         return email.getText().equals(confirmEmail.getText());
     }
 
-    public void showAlert(String msg) {
+    private void showAlert(String msg) {
         errorMsg.setText(msg);
         errorMsg.setVisible(true);
     }
-
-    /*public void showAlert(String msg) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-            alert.showAndWait();
-        });
-    }*/
-
-
 
     @FXML
     private void getLoginScene() throws IOException {
