@@ -7,11 +7,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: #00b0f0; -fx-border-width: 3; -fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LaunchController">
+<AnchorPane prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: #00b0f0; -fx-border-width: 3; -fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kirillgontov.cloudstorage.client.launch.LaunchController">
    <children>
       <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../../cloud-small.png" />
+            <Image url="/images/cloud-small.png" />
          </image>
       </ImageView>
       <Label layoutX="250.0" layoutY="30.0" text="Files" textAlignment="CENTER" textFill="#46b4ff">

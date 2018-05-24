@@ -1,3 +1,7 @@
+package kirillgontov.cloudstorage.server;
+
+import kirillgontov.cloudstorage.common.Command;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -17,7 +21,7 @@ public class Server implements Runnable {
 
     private ByteBuffer byteBuffer = ByteBuffer.allocate(256);
 
-    Server() throws IOException, SQLException {
+    Server() throws IOException, SQLException, ClassNotFoundException {
         SQLHandler.connect();
         this.serverSocket = ServerSocketChannel.open(); // создание сервер сокета
         this.serverSocket.socket().bind(new InetSocketAddress(host, port)); // привязываем локальный адрес
@@ -54,10 +58,13 @@ public class Server implements Runnable {
             try {
                 selector.close();
                 serverSocket.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            byteBuffer = null;
             SQLHandler.disconnect();
+            System.out.println("Everything is closed");
         }
     }
 
@@ -65,37 +72,76 @@ public class Server implements Runnable {
         SocketChannel clientSocket = serverSocket.accept(); // получаем ссылку на сокет канал клиента (сокет каналы постоянно не создаются, мы просто берем ссылку)
         String address = (new StringBuilder(clientSocket.socket().getInetAddress().toString())).append(":").append(clientSocket.socket().getPort()).toString(); // запрашиваем из сокета полный IP-адрес клиента
         clientSocket.configureBlocking(false); // будем работать с этим клиентом не в режиме блокировки
-        clientSocket.register(selector, SelectionKey.OP_READ, address);   // клиентский сокет канал регистрируется на селекторе, говорит ему, чтобы реагировал на события READ с этого канала,
+        clientSocket.register(selector, SelectionKey.OP_READ, address); // клиентский сокет канал регистрируется на селекторе, говорит ему, чтобы реагировал на события READ с этого канала,
         // даем имя этому каналу
         System.out.println("accepted connection from: " + address);
     }
 
     private void handleRead(SelectionKey key) throws IOException {
         SocketChannel clientSocket = (SocketChannel) key.channel();
-        StringBuilder sb = new StringBuilder();
-
+        String address = (new StringBuilder(clientSocket.socket().getInetAddress().toString())).append(":").append(clientSocket.socket().getPort()).toString();
         byteBuffer.clear();
-        int read = 0;
-        while ((read = clientSocket.read(byteBuffer)) > 0) {
-            byteBuffer.flip();
-            byte[] bytes = new byte[byteBuffer.limit()];
-            byteBuffer.get(bytes);
-            sb.append(new String(bytes));
-            byteBuffer.clear();
+        clientSocket.read(byteBuffer);
+        String request =  new String(byteBuffer.array()).trim();
+        System.out.println(address + ": " + request);
+        byteBuffer.clear();
+        if (request.startsWith(Command.LOGIN.getText())) {
+            login(request, clientSocket);
         }
-        String msg;
-        if (read < 0) {
-            msg = key.attachment() + " left the chat.\n";
+        if (request.startsWith(Command.REGISTER.getText())) {
+            register(request, clientSocket);
+        }
+        if (clientSocket.read(byteBuffer) < 0)
             clientSocket.close();
-        } else {
-            msg = key.attachment() + ": " + sb.toString();
-        }
-
-        System.out.println(msg);
-//        broadcast(msg);
     }
 
-    public static void main (String[] args) throws IOException, SQLException {
+    private void register (String request, SocketChannel clientSocket) throws IOException{
+        String[] regTokens = request.split(" ");
+        String firstName = regTokens[1];
+        String lastName = regTokens[2];
+        String emailReg = regTokens[3];
+        String passwordReg = regTokens[4];
+        try {
+            SQLHandler.addNewUser(firstName,lastName,emailReg,passwordReg);
+        } catch (SQLException e) {
+            byteBuffer.put(Command.USERNAME_EXISTS.bytes());
+            clientSocket.write(byteBuffer);
+            byteBuffer.clear();
+            return;
+        }
+        byteBuffer.put(Command.REGISTER_SUCCESS.bytes());
+        clientSocket.write(byteBuffer);
+        byteBuffer.clear();
+        //создать папку FileService
+    }
+
+    private void login (String request, SocketChannel clientSocket) throws IOException{
+        String[] authTokens = request.split(" ");
+        String email = authTokens[1];
+        String password = authTokens[2];
+        try {
+            SQLHandler.checkUsername(email);
+        } catch (SQLException e) {
+            byteBuffer.put(Command.USERNAME_EMPTY.bytes());
+            clientSocket.write(byteBuffer);
+            byteBuffer.clear();
+            return;
+        }
+        try {
+            SQLHandler.checkPassword(email, password);
+        } catch (SQLException e) {
+            byteBuffer.put(Command.PASSWORD_INCORRECT.bytes());
+            clientSocket.write(byteBuffer);
+            byteBuffer.clear();
+            return;
+        }
+        byteBuffer.put(Command.LOGIN_SUCCESS.bytes());
+        clientSocket.write(byteBuffer);
+        byteBuffer.clear();
+        // подгрузить папку
+    }
+
+    public static void main (String[] args) throws IOException, SQLException, ClassNotFoundException {
         Server server = new Server();
         (new Thread(server)).start();
     }

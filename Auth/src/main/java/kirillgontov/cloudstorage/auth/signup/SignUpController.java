@@ -1,3 +1,5 @@
+package kirillgontov.cloudstorage.auth.signup;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -6,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
 
 
 public class SignUpController {
@@ -20,13 +22,13 @@ public class SignUpController {
     Label errorMsg;
 
     @FXML
-    private void addNewUser() throws IOException{
+    private void addNewUser(){
         errorMsg.setVisible(false);
         if (isEmailConfirmed() && isPasswordConfirmed()){
             try {
-                SQLHandler.addNewUser(firstName.getText(),lastName.getText(),email.getText(),password.getText());
+
                 getLoginScene();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 showAlert("This email address is already registered");
                 email.clear();
                 email.requestFocus();
@@ -67,7 +69,7 @@ public class SignUpController {
 
     @FXML
     private void getLoginScene() throws IOException {
-        Parent rootSignUp = FXMLLoader.load(getClass().getResource("login.fxml"));
+        Parent rootSignUp = FXMLLoader.load(getClass().getResource("../login/login.fxml"));
         Scene sceneSignUp = new Scene(rootSignUp, 600, 400);
         Stage stage = (Stage) backBtn.getScene().getWindow();
         stage.setScene(sceneSignUp);

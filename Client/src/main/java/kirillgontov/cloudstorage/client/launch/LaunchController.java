@@ -1,3 +1,5 @@
+package kirillgontov.cloudstorage.client.launch;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -43,6 +45,7 @@ public class LaunchController implements Initializable {
 
     @FXML
     public void download(ActionEvent actionEvent) {
+
 
     }
 

@@ -1,3 +1,5 @@
+package kirillgontov.cloudstorage.auth;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +13,7 @@ public class Main extends Application {
 
         primaryStage.initStyle(StageStyle.UNDECORATED); //remove window decoration
 
-        Parent rootLogin = FXMLLoader.load(getClass().getResource("login.fxml"));
+        Parent rootLogin = FXMLLoader.load(getClass().getResource("login/login.fxml"));
         Scene sceneLogin = new Scene(rootLogin, 600, 400);
 
         primaryStage.setTitle("Cloud Storage");

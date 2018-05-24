@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: #46b4ff; -fx-border-width: 3; -fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SignUpController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: #46b4ff; -fx-border-width: 3; -fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kirillgontov.cloudstorage.auth.signup.SignUpController">
    <children>
       <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../../cloud-small.png" />
-         </image>
+            <Image url="@../../../../../resources/images/cloud-small.png" />
       </ImageView>
       <Label layoutX="179.0" layoutY="30.0" text="Registration" textAlignment="CENTER" textFill="#46b4ff">
          <font>
