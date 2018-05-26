@@ -13,14 +13,13 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kirillgontov.cloudstorage.client.Configuration;
 import kirillgontov.cloudstorage.common.Command;
+import kirillgontov.cloudstorage.common.Message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 
-public class LoginController{
+public class LoginController {
 
     @FXML
     Label errorMsg;
@@ -31,48 +30,44 @@ public class LoginController{
     @FXML
     PasswordField password;
 
-    public TextField getEmail() {
-        return email;
-    }
-
 
 //    private SocketChannel clientSocket;
 
     private Socket socket;
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
 
 
     public void connect() {
         try {
             socket = new Socket(Configuration.SERVER_HOST, Configuration.SERVER_PORT);
-            inputStream = new DataInputStream(socket.getInputStream());
-            outputStream = new DataOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
             Thread t = new Thread(() -> {
                 try {
-                    while (true) {
-                        String str = inputStream.readUTF();
-                        if (str.startsWith(Command.LOGIN_SUCCESS.getText())) {
-                            System.out.println(str);
+                    Message response = (Message) inputStream.readObject();
+                    System.out.println(response.getCommand().toString());
+                    switch (response.getCommand()){
+                        case LOGIN_SUCCESS:
                             getLaunchScene();
                             break;
-                        }
-                        if (str.startsWith(Command.USERNAME_EMPTY.getText())){
-                            System.out.println(str);
+
+                        case USERNAME_EMPTY:
                             showAlert("User does not exist");
                             email.clear();
                             password.clear();
-                        }
-                        if (str.startsWith(Command.PASSWORD_INCORRECT.getText())){
-                            System.out.println(str);
+                            break;
+
+                        case PASSWORD_INCORRECT:
                             showAlert("Incorrect password");
                             password.clear();
                             password.requestFocus();
-                        }
+                            break;
                     }
-                } catch (IOException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
-                } finally {
+                }
+                finally{
                     showAlert("Server disconnected");
                     try {
                         socket.close();
@@ -81,7 +76,6 @@ public class LoginController{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 }
             });
             t.setDaemon(true);
@@ -92,14 +86,15 @@ public class LoginController{
         }
     }
 
-    public void login (ActionEvent actionEvent) {
+    public void login () {
         if (socket == null || socket.isClosed()) {
             connect();
         }
         try {
-            outputStream.writeUTF(Command.LOGIN.getText() + " " + email.getText() + " " + password.getText());
+            outputStream.writeObject(new Message(Command.LOGIN, email.getText(), password.getText()));
             email.clear();
             password.clear();
+
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Connection maintenance");

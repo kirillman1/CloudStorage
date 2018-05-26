@@ -9,6 +9,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -28,29 +30,48 @@ public class LaunchController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         data = FXCollections.observableArrayList();
         view.setItems(data);
+
+        //drag and drop
+        view.setOnDragOver(event -> {
+            if (event.getGestureSource() != view && event.getDragboard().hasFiles()){
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            event.consume();
+        });
+        view.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            boolean success = false;
+            if (dragboard.hasFiles()){
+//                sendFile(dragboard.getFiles().get(0).getAbsolutePath());
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
     }
 
 
     @FXML
-    private void upload(ActionEvent actionEvent){
+    private void upload(){
         data.add("test");
     }
 
     @FXML
-    public void delete(ActionEvent actionEvent) {
+    public void delete() {
         if(view.getSelectionModel().getSelectedIndex() != -1){
             data.remove(view.getSelectionModel().getSelectedIndex());
         }
     }
 
     @FXML
-    public void download(ActionEvent actionEvent) {
+    public void download() {
 
 
     }
 
     @FXML
-    public void rename(ActionEvent actionEvent) {
+    public void rename() {
 
     }
 

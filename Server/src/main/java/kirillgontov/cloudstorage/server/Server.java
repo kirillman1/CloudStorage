@@ -1,14 +1,17 @@
 package kirillgontov.cloudstorage.server;
 import kirillgontov.cloudstorage.common.Command;
+import kirillgontov.cloudstorage.common.Message;
+import sun.nio.ch.ChannelInputStream;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -22,12 +25,10 @@ public class Server implements Runnable {
     Server() throws IOException, SQLException, ClassNotFoundException {
         SQLHandler.connect();
         this.serverSocket = ServerSocketChannel.open(); // создание сервер сокета
-        this.serverSocket.socket().bind(new InetSocketAddress(host, port)); // привязываем локальный адрес
+        this.serverSocket.socket().bind(new InetSocketAddress(host, port)); // привязываем адрес и порт
         this.serverSocket.configureBlocking(false); // настраиваем неблокирующие операции
-        this.selector = Selector.open(); // создаем селектор
-
-        // сервер регистрируется на селекторе;
-        // сервер говорит селектору, чтобы он реагировал на сообщения OP-ACCEPT (клиент подключился) со стороны сервера
+        this.selector = Selector.open();
+        // сервер регистрируется на селекторе, чтобы он реагировал на сообщения OP-ACCEPT (клиент подключился)
         this.serverSocket.register(selector, SelectionKey.OP_ACCEPT);
     }
 
@@ -42,12 +43,12 @@ public class Server implements Runnable {
                 iter = this.selector.selectedKeys().iterator(); // запрашиваем ссылку на итератор, selectedKeys = все необработанные события на сервере
                 while (iter.hasNext()) { // перебираем события
                     key = iter.next(); // событие
-                    if (key.isAcceptable()) this.handleAccept(serverSocket, selector); // проверяем что за событие и как его обрабатывать
+                    if (key.isAcceptable()) this.handleAccept(key); // проверяем что за событие и как его обрабатывать
                     if (key.isReadable()) this.handleRead(key);
                     iter.remove(); // выкидываем событие, чтобы не обработать его несколько раз
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println("IOException, server of port " + this.port + " terminating. Stack trace:");
             e.printStackTrace();
         } finally {
@@ -63,31 +64,40 @@ public class Server implements Runnable {
         }
     }
 
-    private void handleAccept(ServerSocketChannel serverSocket, Selector selector) throws IOException {
+    private void handleAccept(SelectionKey key) throws IOException {
 
-        SocketChannel clientSocket = serverSocket.accept(); // получаем ссылку на сокет канал клиента (сокет каналы постоянно не создаются, мы просто берем ссылку)
-        String address = (new StringBuilder(clientSocket.socket().getInetAddress().toString())).append(":").append(clientSocket.socket().getPort()).toString(); // запрашиваем из сокета полный IP-адрес клиента
+        SocketChannel clientSocket = ((ServerSocketChannel)key.channel()).accept(); // получаем ссылку на сокет канал клиента (сокет каналы постоянно не создаются, мы просто берем ссылку)
+        String address = clientSocket.getRemoteAddress().toString(); // запрашиваем из сокета полный IP-адрес клиента
         clientSocket.configureBlocking(false); // будем работать с этим клиентом не в режиме блокировки
         clientSocket.register(selector, SelectionKey.OP_READ, address); // клиентский сокет канал регистрируется на селекторе, говорит ему, чтобы реагировал на события READ с этого канала,
         // даем имя этому каналу
         System.out.println("accepted connection from: " + address);
     }
 
-    private void handleRead(SelectionKey key) throws IOException {
+    private void handleRead(SelectionKey key) throws IOException, ClassNotFoundException {
         SocketChannel clientSocket = (SocketChannel) key.channel();
+//        clientSocket.configureBlocking(true);
         String address = (new StringBuilder(clientSocket.socket().getInetAddress().toString())).append(":").append(clientSocket.socket().getPort()).toString();
         byteBuffer.clear();
-        clientSocket.read(byteBuffer);
-        String request =  new String(byteBuffer.array()).trim();
-        System.out.println(address + ": " + request);
-        byteBuffer.clear();
+        //clientSocket.read(byteBuffer);
+        //String request =  new String(byteBuffer.array()).trim();
+        //System.out.println(address + ": " + request);
+        ObjectInputStream inputStream = new ObjectInputStream(clientSocket.socket().getInputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(Channels.newOutputStream(clientSocket));
 
-        if (request.startsWith(Command.LOGIN.getText())) {
+        //Object request  = inputStream.readObject();
+        Message request = (Message) inputStream.readObject();
+
+
+        /*if (request.` == ) {
             login(request, clientSocket);
         }
         if (request.startsWith(Command.REGISTER.getText())) {
             register(request, clientSocket);
-        }
+        }*/
+
+        //Message request = (Message) inputStream.readObject();
+        System.out.println(request.getCommand().toString());
     }
 
     private void login (String request, SocketChannel clientSocket) throws IOException{
@@ -113,10 +123,12 @@ public class Server implements Runnable {
             byteBuffer.clear();
             return;
         }*/
-        byteBuffer.put(Command.LOGIN_SUCCESS.getText().getBytes());
-        byteBuffer.flip();
 
+//        byteBuffer.put(("A" + Command.LOGIN_SUCCESS.getText()).getBytes());
+        byteBuffer.flip();
+        System.out.println(byteBuffer.get());
         clientSocket.write(byteBuffer);
+
         byteBuffer.clear();
         // подгрузить папку
     }
@@ -130,13 +142,13 @@ public class Server implements Runnable {
         try {
             SQLHandler.addNewUser(firstName,lastName,emailReg,passwordReg);
         } catch (SQLException e) {
-            byteBuffer.put(Command.USERNAME_EXISTS.bytes());
+//            byteBuffer.put(Command.USERNAME_EXISTS);
             byteBuffer.flip();
             clientSocket.write(byteBuffer);
             byteBuffer.clear();
             return;
         }
-        byteBuffer.put(Command.REGISTER_SUCCESS.bytes());
+//        byteBuffer.put(Command.REGISTER_SUCCESS);
         byteBuffer.flip();
         clientSocket.write(byteBuffer);
         byteBuffer.clear();
@@ -147,11 +159,7 @@ public class Server implements Runnable {
         Server server = null;
         try {
             server = new Server();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         (new Thread(server)).start();
