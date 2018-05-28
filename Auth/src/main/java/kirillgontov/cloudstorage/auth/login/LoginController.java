@@ -1,9 +1,8 @@
 package kirillgontov.cloudstorage.auth.login;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,15 +10,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import kirillgontov.cloudstorage.client.Configuration;
+import kirillgontov.cloudstorage.client.ClientNIO;
 import kirillgontov.cloudstorage.common.Command;
-import kirillgontov.cloudstorage.common.Message;
 
-import java.io.*;
-import java.net.Socket;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class LoginController {
+public class LoginController implements Initializable {
 
     @FXML
     Label errorMsg;
@@ -30,129 +29,58 @@ public class LoginController {
     @FXML
     PasswordField password;
 
+    public ClientNIO client;
 
-//    private SocketChannel clientSocket;
-
-    private Socket socket;
-    private ObjectInputStream inputStream;
-    private ObjectOutputStream outputStream;
-
-
-    public void connect() {
-        try {
-            socket = new Socket(Configuration.SERVER_HOST, Configuration.SERVER_PORT);
-            inputStream = new ObjectInputStream(socket.getInputStream());
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
-            Thread t = new Thread(() -> {
-                try {
-                    Message response = (Message) inputStream.readObject();
-                    System.out.println(response.getCommand().toString());
-                    switch (response.getCommand()){
-                        case LOGIN_SUCCESS:
-                            getLaunchScene();
-                            break;
-
-                        case USERNAME_EMPTY:
-                            showAlert("User does not exist");
-                            email.clear();
-                            password.clear();
-                            break;
-
-                        case PASSWORD_INCORRECT:
-                            showAlert("Incorrect password");
-                            password.clear();
-                            password.requestFocus();
-                            break;
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-                finally{
-                    showAlert("Server disconnected");
-                    try {
-                        socket.close();
-                        inputStream.close();
-                        outputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            t.setDaemon(true);
-            t.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Connection maintenance");
-        }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        errorMsg.setVisible(false);
+        connect();
     }
 
-    public void login () {
-        if (socket == null || socket.isClosed()) {
-            connect();
-        }
-        try {
-            outputStream.writeObject(new Message(Command.LOGIN, email.getText(), password.getText()));
+    @FXML
+    private void login() {
+        String response = client.sendRequest(Command.LOGIN.getText() + " " + email.getText() + " " + password.getText().hashCode());
+
+        if (response.equals(Command.LOGIN_SUCCESS.getText()))
+            try {
+                getLaunchScene();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Can't get new scene");
+            }
+        else if (response.equals(Command.USERNAME_EMPTY.getText())){
+            showAlert("User does not exist");
             email.clear();
             password.clear();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Connection maintenance");
+        } else if (response.equals(Command.PASSWORD_INCORRECT.getText())){
+            showAlert("Incorrect password");
+            password.clear();
+            password.requestFocus();
         }
-    }
 
 
-    /*@FXML
-    private void login() {
-        connect();
-        ByteBuffer buffer = ByteBuffer.allocate(256);
-        buffer.put((Command.LOGIN.getText()+ " " + email.getText() + " " + password.getText().hashCode()).getBytes());
-        buffer.flip();
-        String response;
-        try {
-            clientSocket.write(buffer);
-            buffer.clear();
-            buffer.flip();
-            clientSocket.read(buffer);
-            response = new String(buffer.array()).trim();
-            buffer.clear();
-            System.outputStream.println(response);
-            if (response.equals(Command.LOGIN_SUCCESS.getText()))
-                getLaunchScene();
-            else if (response.equals(Command.USERNAME_EMPTY.getText())){
-                showAlert("User does not exist");
-                email.clear();
-                password.clear();
-            } else if (response.equals(Command.PASSWORD_INCORRECT.getText())){
-                showAlert("Incorrect password");
-                password.clear();
-                password.requestFocus();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
     private void connect(){
         try {
-            //clientSocket = SocketChannel.open(new InetSocketAddress(Configuration.SERVER_HOST, Configuration.SERVER_PORT));
+            client = new ClientNIO();
         } catch (IOException e) {
             showAlert("Server connection maintenance");
         }
-    }*/
+    }
 
     @FXML
-    private void getSignUpScene(ActionEvent actionEvent) throws IOException {
-        Parent rootSignUp = FXMLLoader.load(getClass().getResource("I:\\GitHub\\CloudStorage\\Auth\\src\\main\\java\\kirillgontov\\cloudstorage\\auth\\signup\\signup.fxml"));
+    private void getSignUpScene() throws IOException {
+        Parent rootSignUp = FXMLLoader.load(getClass().getResource( "../signup/signup.fxml"));
         Scene sceneSignUp = new Scene(rootSignUp, 600, 400);
         Stage stage = (Stage) signUpBtn.getScene().getWindow();
         stage.setScene(sceneSignUp);
     }
 
     private void getLaunchScene() throws IOException {
-        Parent rootLaunch = FXMLLoader.load(getClass().getResource("../../../../../../Client/src/main/java/kirillgontov/cloudstorage/client/launch/launch.fxml"));
+        Parent rootLaunch = FXMLLoader.load(getClass().getResource("/kirillgontov/cloudstorage/client/ui/launch.fxml"));
         Scene sceneLaunch = new Scene(rootLaunch, 600, 600);
         Stage stage = (Stage) logInBtn.getScene().getWindow();
         stage.setScene(sceneLaunch);
@@ -164,7 +92,7 @@ public class LoginController {
     }
 
     @FXML
-    private void closeButtonAction(ActionEvent actionEvent){
+    private void closeButtonAction(){
         Stage stage = (Stage) closeBtn.getScene().getWindow();
         stage.close();
     }

@@ -1,11 +1,17 @@
 package kirillgontov.cloudstorage.common;
 
-import java.io.Serializable;
+public enum Command {
+    REGISTER("/register"), LOGIN("/login"),
+    REGISTER_SUCCESS("/register_success"), USERNAME_EXISTS("/username_exists"), USERNAME_EMPTY("/username_empty"), PASSWORD_INCORRECT("/password_incorrect"), LOGIN_SUCCESS("/login_success"),
+    UPLOAD("/upload"), DOWNLOAD("/download"), DELETE("/delete");
 
-public enum Command implements Serializable {
-    REGISTER, LOGIN,
-    REGISTER_SUCCESS, USERNAME_EXISTS, USERNAME_EMPTY, PASSWORD_INCORRECT, LOGIN_SUCCESS,
-    UPLOAD, DOWNLOAD, DELETE;
+    private final String text;
 
+    public final String getText() {
+        return text;
+    }
 
+    Command(final String text){
+        this.text = text;
+    }
 }

@@ -1,4 +1,4 @@
-package kirillgontov.cloudstorage.client;
+package kirillgontov.cloudstorage.client.util;
 
 import java.io.FileInputStream;
 import java.util.Properties;

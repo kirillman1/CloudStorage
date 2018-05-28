@@ -1,4 +1,4 @@
-package kirillgontov.cloudstorage.server;
+package kirillgontov.cloudstorage.server.service;
 
 /**
  * Сохраняет файлы, отдает файлы по запросу

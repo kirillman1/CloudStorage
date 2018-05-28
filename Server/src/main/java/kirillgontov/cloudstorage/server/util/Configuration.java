@@ -1,4 +1,4 @@
-package kirillgontov.cloudstorage.server;
+package kirillgontov.cloudstorage.server.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,9 +32,5 @@ public class Configuration {
             e.printStackTrace();
         }
     }
-    /*private static void checkFile() throws IOException {
-        Path path = Paths.get("config.properties");
-        if (!Files.exists(path))
-            Files.copy(Configuration.class.getResourceAsStream("/config.properties"), path);
-    }*/
+
 }

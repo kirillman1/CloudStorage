@@ -1,4 +1,6 @@
-package kirillgontov.cloudstorage.server;
+package kirillgontov.cloudstorage.server.service;
+
+import kirillgontov.cloudstorage.server.util.Configuration;
 
 import java.sql.*;
 
@@ -17,7 +19,7 @@ public class SQLHandler {
 
     public static void createTable() throws SQLException{
         statement.executeUpdate("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTO_INCREMENT, first_name VARCHAR(50), last_name VARCHAR(50), " +
-                "email VARCHAR(50) UNIQUE NOT NULL , password INTEGER NOT NULL );");
+                "email VARCHAR(50) UNIQUE NOT NULL , password VARCHAR(50) NOT NULL );");
     }
 
     public static void addNewUser (String firstName, String lastName, String email, String passwordHash) throws SQLException{
