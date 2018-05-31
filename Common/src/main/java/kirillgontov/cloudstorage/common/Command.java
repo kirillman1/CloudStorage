@@ -1,17 +1,9 @@
 package kirillgontov.cloudstorage.common;
 
 public enum Command {
-    REGISTER("/register"), LOGIN("/login"),
-    REGISTER_SUCCESS("/register_success"), USERNAME_EXISTS("/username_exists"), USERNAME_EMPTY("/username_empty"), PASSWORD_INCORRECT("/password_incorrect"), LOGIN_SUCCESS("/login_success"),
-    UPLOAD("/upload"), DOWNLOAD("/download"), DELETE("/delete");
+    REGISTER, LOGIN,
+    REGISTER_SUCCESS, EMAIL_EXISTS, USERNAME_EXISTS, USERNAME_EMPTY, PASSWORD_INCORRECT, LOGIN_SUCCESS,
+    UPLOAD, DOWNLOAD, DELETE,
+    UPLOAD_FAILD, UPLOAD_SUCCESS, DELETE_FAILD, DELETE_SUCCESS;
 
-    private final String text;
-
-    public final String getText() {
-        return text;
-    }
-
-    Command(final String text){
-        this.text = text;
-    }
 }

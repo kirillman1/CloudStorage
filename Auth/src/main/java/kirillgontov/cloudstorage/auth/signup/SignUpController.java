@@ -7,8 +7,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import kirillgontov.cloudstorage.auth.login.LoginController;
+import kirillgontov.cloudstorage.client.Client;
 import kirillgontov.cloudstorage.common.Command;
+import kirillgontov.cloudstorage.common.Message;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,13 +18,19 @@ import java.util.ResourceBundle;
 
 public class SignUpController implements Initializable {
     @FXML
-    TextField firstName, lastName, email, confirmEmail;
+    TextField firstName, lastName, email, confirmEmail, username;
     @FXML
     PasswordField password, confirmPassword;
     @FXML
     Button submitButton, closeBtn, backBtn;
     @FXML
     Label errorMsg;
+
+    public static void setClient(Client client) {
+        SignUpController.client = client;
+    }
+
+    private static Client client;
 
 
     @Override
@@ -32,24 +39,38 @@ public class SignUpController implements Initializable {
     }
 
     @FXML
-    private void addNewUser(){
+    private void addNewUser() throws IOException, ClassNotFoundException {
         if (isEmailConfirmed() && isPasswordConfirmed()){
-            /*String response = LoginController.client.sendRequest(Command.REGISTER.getText() + " "
-                        + firstName.getText() + " " + lastName.getText() + " "
-                        + email.getText() + " " + password.getText().hashCode());
+            client.sendMessage(new Message.MessageBuilder().setCommand(Command.REGISTER)
+                                                        .setFirstName(firstName.getText())
+                                                        .setLastName(lastName.getText())
+                                                        .setEmail(email.getText())
+                                                        .setUsername(username.getText())
+                                                        .setPasswordHash(password.getText().hashCode())
+                                                        .create());
 
-            if (response.equals(Command.REGISTER_SUCCESS.getText()))
-                try {
-                    getLoginScene();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showAlert("Can't get new scene");
-                }
-            else if (response.equals(Command.USERNAME_EXISTS.getText())){
-                showAlert("This email address is already registered");
-                email.clear();
-                email.requestFocus();
-            }*/
+            Message message = client.receiveMessage();
+
+            switch (message.getCommand()){
+                case REGISTER_SUCCESS:
+                    try {
+                        getLoginScene();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        showAlert("Can't get new scene");
+                    }
+                    break;
+                case EMAIL_EXISTS:
+                    showAlert("This email address is already registered");
+                    email.clear();
+                    email.requestFocus();
+                    break;
+                case USERNAME_EXISTS:
+                    showAlert("This username is already registered");
+                    username.clear();
+                    username.requestFocus();
+                    break;
+            }
         }
         if (!isEmailConfirmed()){
             showAlert("Email does not match");

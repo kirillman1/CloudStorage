@@ -24,7 +24,7 @@
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="7.0" />
          </font>
       </Label>
-      <TextField fx:id="email" alignment="CENTER" focusTraversable="false" layoutX="200.0" layoutY="230.0" prefWidth="200.0" promptText="Email" />
+      <TextField fx:id="username" alignment="CENTER" focusTraversable="false" layoutX="200.0" layoutY="230.0" prefWidth="200.0" promptText="Username" />
       <Button fx:id="signUpBtn" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#getSignUpScene" style="-fx-background-color: #fff;" text="Sign Up" textAlignment="CENTER" textFill="#46b4ff">
          <font>
             <Font name="Terminator Cyr 4 Semi-expanded Bold" size="11.0" />

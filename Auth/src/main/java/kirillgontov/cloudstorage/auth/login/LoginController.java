@@ -10,8 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import kirillgontov.cloudstorage.client.ClientNIO;
+import kirillgontov.cloudstorage.auth.signup.SignUpController;
+import kirillgontov.cloudstorage.client.Client;
+import kirillgontov.cloudstorage.client.ui.LaunchController;
 import kirillgontov.cloudstorage.common.Command;
+import kirillgontov.cloudstorage.common.Message;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,11 +28,12 @@ public class LoginController implements Initializable {
     @FXML
     Button signUpBtn, logInBtn, closeBtn;
     @FXML
-    TextField email;
+    TextField username;
     @FXML
     PasswordField password;
 
-    public ClientNIO client;
+    private static Client client;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -38,41 +42,55 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    private void login() {
-        String response = client.sendRequest(Command.LOGIN.getText() + " " + email.getText() + " " + password.getText().hashCode());
+    private void login() throws IOException, ClassNotFoundException {
+        username.setDisable(true);
+        password.setEditable(false);
+        client.sendMessage(new Message.MessageBuilder().setCommand(Command.LOGIN)
+                                                        .setUsername(username.getText())
+                                                        .setPasswordHash(password.getText().hashCode())
+                                                        .create());
 
-        if (response.equals(Command.LOGIN_SUCCESS.getText()))
-            try {
-                getLaunchScene();
-            } catch (IOException e) {
-                e.printStackTrace();
-                showAlert("Can't get new scene");
-            }
-        else if (response.equals(Command.USERNAME_EMPTY.getText())){
-            showAlert("User does not exist");
-            email.clear();
-            password.clear();
-
-        } else if (response.equals(Command.PASSWORD_INCORRECT.getText())){
-            showAlert("Incorrect password");
-            password.clear();
-            password.requestFocus();
+        Message message = client.receiveMessage();
+        switch (message.getCommand()){
+            case LOGIN_SUCCESS:
+                try {
+                    LaunchController.setClient(client);
+                    LaunchController.setUsernameText(username.getText());
+                    getLaunchScene();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    showAlert("Can't get new scene");
+                }
+                break;
+            case USERNAME_EMPTY:
+                showAlert("User does not exist");
+                username.setDisable(false);
+                password.setDisable(false);
+                username.clear();
+                password.clear();
+                break;
+            case PASSWORD_INCORRECT:
+                showAlert("Incorrect password");
+                username.setDisable(false);
+                password.setDisable(false);
+                password.clear();
+                password.requestFocus();
+                break;
         }
-
-
-
     }
 
     private void connect(){
         try {
-            client = new ClientNIO();
+            client = new Client();
         } catch (IOException e) {
+            client.finishConnection();
             showAlert("Server connection maintenance");
         }
     }
 
     @FXML
     private void getSignUpScene() throws IOException {
+        SignUpController.setClient(client);
         Parent rootSignUp = FXMLLoader.load(getClass().getResource( "../signup/signup.fxml"));
         Scene sceneSignUp = new Scene(rootSignUp, 600, 400);
         Stage stage = (Stage) signUpBtn.getScene().getWindow();
