@@ -32,7 +32,7 @@ public class LoginController implements Initializable {
     @FXML
     PasswordField password;
 
-    private static Client client;
+    private Client client;
 
 
     @Override
@@ -56,6 +56,7 @@ public class LoginController implements Initializable {
                 try {
                     LaunchController.setClient(client);
                     LaunchController.setUsernameText(username.getText());
+                    LaunchController.setObservableList(message.getFileList());
                     getLaunchScene();
                 } catch (IOException e) {
                     e.printStackTrace();

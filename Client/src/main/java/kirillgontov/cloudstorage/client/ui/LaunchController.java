@@ -15,43 +15,34 @@ import javafx.stage.Stage;
 import kirillgontov.cloudstorage.client.Client;
 import kirillgontov.cloudstorage.common.Command;
 import kirillgontov.cloudstorage.common.Message;
+import kirillgontov.cloudstorage.common.MessageService;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class LaunchController implements Initializable {
 
     @FXML
-    Button closeBtn, logOutBtn, uploadBtn, downloadBtn, deleteBtn, renameBtn;
+    Button closeBtn, logOutBtn, uploadBtn, downloadBtn, deleteBtn;
     @FXML
     Label errorMsg, username;
     @FXML
     ListView<Path> listView;
-    private ObservableList<Path> observableList;
-
-
+    private static ObservableList<Path> observableList;
     private static Client client;
-    public static void setClient(Client client) {
-        LaunchController.client = client;
-    }
     private static String usernameText;
-    public static void setUsernameText(String usernameText) {
-        LaunchController.usernameText = usernameText;
-    }
-
-
 
     public void initialize(URL location, ResourceBundle resources) {
         username.setText(usernameText);
         errorMsg.setVisible(false);
-        observableList = FXCollections.observableArrayList();
-        listView.setItems(observableList);
 
+        listView.setItems(observableList);
         //drag and drop
         listView.setOnDragOver(event -> {
             if (event.getGestureSource() != listView && event.getDragboard().hasFiles()){
@@ -71,7 +62,12 @@ public class LaunchController implements Initializable {
         });
     }
 
-
+    @FXML
+    private void chooseFileAndUpload () {
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(uploadBtn.getScene().getWindow());
+        upload(file);
+    }
     private void upload(File file) {
         try {
             if (file != null) {
@@ -79,16 +75,15 @@ public class LaunchController implements Initializable {
                 byte[] fileBytes = Files.readAllBytes(file.toPath());
 
                 client.sendMessage(new Message.MessageBuilder().setCommand(Command.UPLOAD)
-                        .setUsername(username.getText())
-                        .setFileName(fileName)
-                        .setFileBytes(fileBytes)
-                        .create());
+                                                                .setUsername(username.getText())
+                                                                .setFileName(fileName)
+                                                                .setFileBytes(fileBytes).create());
                 Message message = client.receiveMessage();
                 switch (message.getCommand()) {
                     case UPLOAD_SUCCESS:
-                        //TODO setNewFileList();
+                        setObservableList(message.getFileList());
                         break;
-                    case UPLOAD_FAILD:
+                    case UPLOAD_FAILED:
                         showAlert("File already exists");
                         break;
                 }
@@ -99,43 +94,59 @@ public class LaunchController implements Initializable {
     }
 
     @FXML
-    private void chooseFileAndUpload () {
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(uploadBtn.getScene().getWindow());
-        upload(file);
-    }
-
-    @FXML
-    public void delete() {
+    public void delete() throws IOException, ClassNotFoundException {
         if(listView.getSelectionModel().getSelectedIndex() != -1){
-            //TODO
-            observableList.remove(listView.getSelectionModel().getSelectedIndex());
+            Path path = listView.getSelectionModel().getSelectedItem();
+            String fileName = path.getFileName().toString();
+
+            client.sendMessage(new Message.MessageBuilder().setCommand(Command.DELETE)
+                                                        .setUsername(username.getText())
+                                                        .setFileName(fileName).create());
+            Message message = client.receiveMessage();
+            switch (message.getCommand()) {
+                case DELETE_SUCCESS:
+                    setObservableList(message.getFileList());
+                    break;
+                case DELETE_FAILED:
+                    showAlert("Can't delete");
+                    break;
+            }
         }
     }
 
     @FXML
-    public void download() {
-
-
+    public void download() throws IOException, ClassNotFoundException {
+        if(listView.getSelectionModel().getSelectedIndex() != -1){
+            Path path = listView.getSelectionModel().getSelectedItem();
+            String fileName = path.getFileName().toString();
+            client.sendMessage(new Message.MessageBuilder().setCommand(Command.DOWNLOAD)
+                                                        .setUsername(username.getText())
+                                                        .setFileName(fileName).create());
+            Message message = client.receiveMessage();
+            switch (message.getCommand()) {
+                case DOWNLOAD_SUCCESS:
+                    FileChooser fileChooser = new FileChooser();
+                    File file = fileChooser.showSaveDialog(downloadBtn.getScene().getWindow());
+                    if (file.isDirectory()){
+                        Path savePath = Paths.get(file.getCanonicalPath() + "/" + message.getFileName());
+                        Files.write(savePath, message.getFileBytes());
+                    }
+                    if (file.isFile()){
+                        Files.write(file.toPath(), message.getFileBytes());
+                    }
+                    break;
+                case DOWNLOAD_FAILED:
+                    showAlert("Can't download");
+                    break;
+            }
+        }
     }
-
-    @FXML
-    public void rename() {
-
-    }
-
 
     @FXML
     private void disconnect() throws IOException {
 
-
-
-
         getLoginScene();
     }
-
-
-
 
     private void getLoginScene() throws IOException {
         Parent rootSignUp = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -153,5 +164,17 @@ public class LaunchController implements Initializable {
     private void showAlert(String msg) {
         errorMsg.setText(msg);
         errorMsg.setVisible(true);
+    }
+
+    public static void setClient(Client client) {
+        LaunchController.client = client;
+    }
+
+    public static void setUsernameText(String usernameText) {
+        LaunchController.usernameText = usernameText;
+    }
+
+    public static void setObservableList(List<Path> fileList) {
+        LaunchController.observableList = FXCollections.observableList(fileList);
     }
 }

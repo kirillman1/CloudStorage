@@ -33,6 +33,7 @@ public class Client {
     }
 
     public void finishConnection() {
+        //TODO посмотреть еще раз
         try {
             clientChannel.finishConnect();
         } catch (IOException e) {
